@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var countryAdapter: ArrayAdapter<String>
     private lateinit var countryNameSlugMap: MutableMap<String, String>
 
+    val GRAPHIC_DATA_LIMIT = 80
+
     private enum class Information(val type: String){
         DAY_ONE("Day one"),
         BY_COUNTRY("By country")
@@ -114,7 +116,18 @@ class MainActivity : AppCompatActivity() {
                     resultGv.gridLabelRenderer.resetStyles()
 
                     val pointsArrayList = arrayListOf<DataPoint>()
-                    casesList.forEach {
+
+                    var minifiedCaseList = DayOneResponseList()
+                    minifiedCaseList.addAll(casesList)
+
+
+
+                    if (casesList.size > GRAPHIC_DATA_LIMIT) {
+                        minifiedCaseList.clear();
+                        minifiedCaseList.addAll(casesList.subList(casesList.size - GRAPHIC_DATA_LIMIT, casesList.size))
+                    }
+
+                    minifiedCaseList.forEach {
                         val date = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(it.date.substring(0,10))
                         val point = DataPoint(date, it.cases.toDouble())
                         pointsArrayList.add(point)
